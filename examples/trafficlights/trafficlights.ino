@@ -14,15 +14,13 @@ const Motor& red = ft.motor3;
 
 volatile bool pedestrianRequest = false;
 
-void makePedestrianRequest() {
+void raisePedestrianRequest() {
   pedestrianRequest = true;
 }
 
 void setup() {
-  // serial communications at 9600 bps -- just for debugging.
-  //Serial.begin(9600); 
-  //  attachInterrupt(digitalPinToInterrupt(button.toPin()), makePedestrianRequest, FALLING);
-  attachInterrupt(0, makePedestrianRequest, FALLING);
+  attachInterrupt(digitalPinToInterrupt(button.toPin()), raisePedestrianRequest, FALLING);
+  //attachInterrupt(0, raisePedestrianRequest, FALLING);
 }
 
 void loop() {
