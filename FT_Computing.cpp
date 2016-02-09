@@ -1,8 +1,11 @@
 /**
-   FT_Comuting.h - Library for using the Arduino Motor Shield to act like the fischertechnik Computing interface
-   Copyright by Andre Grüning, 2015, 2016
-   Released under the GNU v3 licence or later
-*/
+ * @file   FT_Computing.cpp
+ * @author Copyright Andre Grüning 2015, 2016.
+           Released under the GNU v3 licence or later, see <URL>
+ * @date   Sun Jan 17 18:20:36 2016
+ * 
+ * @brief  Library for using the Arduino Motor Shield to act like the fischertechnik Computing interface
+ */
 
 #include "Arduino.h"
 #include "FT_Computing.h"
@@ -14,7 +17,8 @@ FT_Computing::FT_Computing(int vMot,
 			   int pinE0, int pinE1,
 			   int pinE2, int pinE3,
 			   int pinE4, int pinE5,
-			   int pinE6, int pinE7) : 
+			   int pinE6, int pinE7,
+			   int pinEX, int pinEY) : 
   maxPwm(2*(255*vMax) / (3*vMot)), 
   motor1(pwmM1, dirM1),
   motor2(pwmM2, dirM2),
@@ -24,7 +28,7 @@ FT_Computing::FT_Computing(int vMot,
   e4(pinE4), e5(pinE5),
   e6(pinE6), e7(pinE7),
   e8(e0),
-  EX(A2), EY(A3) {
+  ex(pinEX), ey(pinEY) {
 
   // set timer 2 divisor to 32 for PWM frequency of 980.39 Hz -- seems
   // to work better than with the FT mini-motors 490 Hz (or both
