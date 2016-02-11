@@ -21,6 +21,7 @@ const Sensor& rightSensor = ft.ey;
 
 
 const Motor& motor = ft.motor2;
+const Input& startButton = ft.e0;
 
 /** 
  * Returns the reading of a Sharp Distance sensor such as [model] in approximate cm.
@@ -53,7 +54,7 @@ void setup() {
 }
 
 
-const int maxDutyCycle = 64;
+const int maxDutyCycle = 56;
 const int minDutyCycle = 48;
 
 void loop() {
@@ -83,7 +84,8 @@ void loop() {
 
 
   // wait for passenger to (dis)embark
-  delay(10000);
+  //delay(10000);
+  while(startButton.isReleased());
 
   // wait for left gondola to arrive
 
@@ -106,10 +108,7 @@ void loop() {
 
   motor.off();
 
-  delay(10000);
-}
+  //delay(10000);
+  while(startButton.isReleased());
 
-  
-  
-  
-  
+}
