@@ -5,13 +5,13 @@
 
 #include "FT_Computing.h"
 
-FT_Computing ft(12);
+FT_Computing ft(21);
 
-const Input& start = ft.e3; 
-const Input& leftEnd = ft.e4; 
-const Input& rightEnd = ft.e5;
-const Input& middlePos = ft.e6;
-const Input& measurement = ft.e7; 
+const Input& start = ft.e6; // ok
+const Input& leftEnd = ft.e3; // E3 and E5 go on
+const Input& rightEnd = ft.e5; // no reaction
+const Input& middlePos = ft.e4; // ok
+const Input& measurement = ft.e7; // ok
 
 const Motor& slide = ft.motor1;
 
@@ -37,7 +37,6 @@ void loop() {
   
   // test whether also the start button is still pressed => long block
   if(start.isDepressed()) {
-    
     slide.right();
     while (not rightEnd.isDepressed());
     slide.left();

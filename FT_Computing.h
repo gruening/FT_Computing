@@ -293,7 +293,6 @@ class FT_Computing {
    */
   const int maxPwm;  
 
-  
   /** 
    * creates an instance of the Ardunio ft interface. Among other
    * things, it essentially specifies to which Arduino pins the ft
@@ -324,11 +323,13 @@ class FT_Computing {
 	       int pwmM1 = 3, int dirM1 = 12, 
 	       int pwmM2 = 11, int dirM2 = 13, 
 	       int pwmM3 = 10, int dirM3 = -1,
-	       int pinE0 = A5 /* 2 */, int pinE1 = -1, // assign
+	       int pinE0 = A5 /* 2 */,
+	       int pinE1 = -1, // assign
 	       int pinE2 = -1, // assign 
-	       int pinE3 = 6, 
-	       int pinE4 = 4, int pinE5 = 5,
+	       int pinE3 = -1, //A3, // only temporare normally it is 4 , now E3 functions without e5
+	       int pinE4 = 5, int pinE5 = -1, //A2, // only temp normrally it is 6, BUT e5 DOES NOT WORK
 	       int pinE6 = 7, int pinE7 = A4,
+
 	       int pinEX = A2, int pinEY = A3 // two analog inputs
 	       );
 

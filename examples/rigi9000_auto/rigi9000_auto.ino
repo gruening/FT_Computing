@@ -14,13 +14,13 @@
 
 FT_Computing ft(12);
 
-const Input& forwards = ft.e3; 
-const Input& backwards = ft.e4; 
+//const Input& forwards = ft.e3; 
+//const Input& backwards = ft.e4; 
 const Sensor& leftSensor = ft.ex;
 const Sensor& rightSensor = ft.ey;
 
 
-const Motor& motor = ft.motor2;
+const Motor& motor = ft.motor1;
 const Input& startButton = ft.e0;
 
 /** 
@@ -53,7 +53,6 @@ void setup() {
   Serial.begin(9600);
 }
 
-
 const int maxDutyCycle = 56;
 const int minDutyCycle = 48;
 
@@ -61,7 +60,6 @@ void loop() {
 
   double dist;
   // wait for right gondola to arrive
-
 
   for(int dutyCycle = minDutyCycle; dutyCycle < maxDutyCycle; dutyCycle++) {
     motor.right(dutyCycle);
