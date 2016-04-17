@@ -5,7 +5,7 @@
 
 #include "FT_Computing.h"
 
-FT_Computing ft(12);
+FT_Computing ft(50);
 
 /// Compare http://forum.arduino.cc/index.php/topic,120440.0.html
 int serial_putchar(char ch, FILE* f) {

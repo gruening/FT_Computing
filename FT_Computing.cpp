@@ -19,7 +19,7 @@ FT_Computing::FT_Computing(int vMot,
 			   int pinE4, int pinE5,
 			   int pinE6, int pinE7,
 			   int pinEX, int pinEY) : 
-  maxPwm(2*(255*vMax) / (3*vMot)), 
+  maxPwm(2*(255*vMax) / (6*vMot)), 
   motor1(pwmM1, dirM1),
   motor2(pwmM2, dirM2),
   motor3(pwmM3, dirM3),

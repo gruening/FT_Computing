@@ -124,7 +124,8 @@ class Motor {
   /** 
    * switches actuator off. Also brings the direction pin into a defined state.
    * 
-   */void off() const {
+   */
+  void off() const {
     this->right(0);
   };
 };
@@ -148,7 +149,8 @@ class Input {
    * active if it receives a HIGH voltage or a LOW voltage (default).
    */
  Input(int pin, int active = LOW) : _pin(pin), _active(active) {
-    pinMode(_pin, INPUT_PULLUP);
+    if(pin != -1)
+      pinMode(_pin, INPUT_PULLUP);
   };
 
   /** 
@@ -157,6 +159,7 @@ class Input {
    * @return true if this Input is logically active, false otherwise.
    */
   bool isActive() const {
+    if(_pin == -1) return false;
     return digitalRead(_pin) == _active;
   }
   /** 
@@ -326,9 +329,10 @@ class FT_Computing {
 	       int pinE0 = A5 /* 2 */,
 	       int pinE1 = -1, // assign
 	       int pinE2 = -1, // assign 
-	       int pinE3 = -1, //A3, // only temporare normally it is 4 , now E3 functions without e5
-	       int pinE4 = 5, int pinE5 = -1, //A2, // only temp normrally it is 6, BUT e5 DOES NOT WORK
-	       int pinE6 = 7, int pinE7 = A4,
+	       int pinE3 = A4, //A3, // only temporare normally it is 4 , now E3 functions without e5
+	       int pinE4 = 5, int pinE5 = 7, //A2, // only temp normrally it is 6, BUT e5 DOES NOT WORK
+	       int pinE6 = 4, 
+	       int pinE7 = 2,
 
 	       int pinEX = A2, int pinEY = A3 // two analog inputs
 	       );
