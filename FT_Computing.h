@@ -29,12 +29,12 @@
     the opposite direction of right/up/forwards.
 */
 class Motor {
- private:
+private:
   const int _pwmPin; /// pin for pwm signal
   const static int _maxDutyCycle = 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
   const int _directionPin; /// pin for direction signal, or -1 if none.
 
- public:  
+public:  
   /** Creates a new motor. If you are not driving a motor but a devise
       for witch change of direction does not make sense, ie a filement
       lamp or electromagnet, you can leave out the dirPin argument. 
@@ -47,16 +47,16 @@ class Motor {
       @param directionPin pin to use for switching direction of
       ouput, default is -1, ie no pin for direction switches.  
   */
- Motor(int pwmPin, int directionPin = -1) : 
-  _pwmPin(pwmPin), 
+  Motor(int pwmPin, int directionPin = -1) : 
+    _pwmPin(pwmPin), 
     //_maxDutyCycle(maxDutyCycle),
     _directionPin(directionPin) 
-    {
-      if(_directionPin != -1) {
-	pinMode(_directionPin, OUTPUT);
-      }
-      this->off();
-    };
+  {
+    if(_directionPin != -1) {
+      pinMode(_directionPin, OUTPUT);
+    }
+    this->off();
+  };
 
   /** 
    * Switches on a motor rotating "right". If argument pwm is left
@@ -66,6 +66,7 @@ class Motor {
    */
   void right(int pwm = _maxDutyCycle) const {
     if(_directionPin != -1) digitalWrite(_directionPin, LOW);
+    if(pwm > _maxDutyCycle) pwm = _maxDutyCycle;
     analogWrite(_pwmPin, pwm);
   };
   /** 
@@ -135,11 +136,11 @@ class Motor {
  */
 class Input {
 
- private:
+private:
   const int _pin; /// the pin number of the output
   const int _active; /// whether this Input is active HIGH or active  LOW (reversed logic)
 
- public:
+public:
   /** 
    * Creates and initialised a new input. Hides logical details from
    * the user.
@@ -148,7 +149,7 @@ class Input {
    * @param active optional, whether the input is logically considered
    * active if it receives a HIGH voltage or a LOW voltage (default).
    */
- Input(int pin, int active = LOW) : _pin(pin), _active(active) {
+  Input(int pin, int active = LOW) : _pin(pin), _active(active) {
     if(pin != -1)
       pinMode(_pin, INPUT_PULLUP);
   };
@@ -195,11 +196,11 @@ class Input {
 
 class Sensor {
 
- private:
+private:
   const int _pin;
 
- public:
- Sensor(const int pin) : _pin(pin) {};
+public:
+  Sensor(const int pin) : _pin(pin) {};
   int getReading() const {
     return analogRead(_pin);
   }
@@ -288,7 +289,7 @@ class Sensor {
  */
 class FT_Computing {
 
- public:
+public:
   
   /**
    * maximum admissable ontime for the PWM pins in order not to
@@ -323,18 +324,24 @@ class FT_Computing {
    * 
    */
   FT_Computing(int vMot = 12, 
-	       int pwmM1 = 3, int dirM1 = 12, 
-	       int pwmM2 = 11, int dirM2 = 13, 
-	       int pwmM3 = 10, int dirM3 = -1,
-	       int pinE0 = A5 /* 2 */,
+	       int pwmM1 = 3,
+	       int dirM1 = 12, 
+	       int pwmM2 = 11, 
+	       int dirM2 = 13, 
+	       int pwmM3 = 10, 
+	       int dirM3 = -1,
+	       int pinE0 = A5,
 	       int pinE1 = -1, // assign
 	       int pinE2 = -1, // assign 
-	       int pinE3 = A4, //A3, // only temporare normally it is 4 , now E3 functions without e5
-	       int pinE4 = 5, int pinE5 = 7, //A2, // only temp normrally it is 6, BUT e5 DOES NOT WORK
+	       int pinE3 = A4, 
+	       int pinE4 = 5, 
+	       int pinE5 = 7, 
 	       int pinE6 = 4, 
 	       int pinE7 = 2,
 
-	       int pinEX = A2, int pinEY = A3 // two analog inputs
+	       // two analog inputs:
+	       int pinEX = A2, 
+	       int pinEY = A3 
 	       );
 
   const static int vMax = 6; /// maximum average output voltage [V] for the actuators (ft is 6V based)
