@@ -360,6 +360,10 @@ public:
   const Input& e8; /// digital input line E8 as an alias for E0 -- to
 		   /// stick with ft numbering convention.
 
+
+  const Input& e[]; /// all digitial inputs in an array
+
+
   const Sensor ex;  /// EX analog input
   const Sensor ey;  /// EY analog input
 };
