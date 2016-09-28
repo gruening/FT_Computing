@@ -28,7 +28,7 @@ FT_Computing::FT_Computing(int vMot,
   e4(pinE4), e5(pinE5),
   e6(pinE6), e7(pinE7),
   e8(e0),
-  ex(pinEX), ey(pinEY),
+  ex(pinEX), ey(pinEY)
 {
 
   // set timer 2 divisor to 32 for PWM frequency of 980.39 Hz -- seems

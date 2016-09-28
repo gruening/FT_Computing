@@ -1,4 +1,4 @@
-/** \file FT_Comuting.h --Library for using the Arduino Motor Shield to act
+/** \file FT_Comuting.h --Library for using the Arduino Motor Shield to act0
     like the fischertechnik Computing interface.
 
     Copyright Andre Grüning, 2015, 2016
@@ -139,6 +139,7 @@ class Input {
 private:
   const int _pin; /// the pin number of the output
   const int _active; /// whether this Input is active HIGH or active  LOW (reversed logic)
+  //  const String name; /// name of the input
 
 public:
   /** 
@@ -149,7 +150,7 @@ public:
    * @param active optional, whether the input is logically considered
    * active if it receives a HIGH voltage or a LOW voltage (default).
    */
-  Input(int pin, int active = LOW) : _pin(pin), _active(active) {
+ Input(/*char* name,*/ int pin, int active = LOW) : /*_name(name), */ _pin(pin), _active(active) {
     if(pin != -1)
       pinMode(_pin, INPUT_PULLUP);
   };
@@ -361,7 +362,7 @@ public:
 		   /// stick with ft numbering convention.
 
 
-  const Input& e[]; /// all digitial inputs in an array
+  //  const Input& e[]; /// all digitial inputs in an array
 
 
   const Sensor ex;  /// EX analog input

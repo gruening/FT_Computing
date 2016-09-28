@@ -40,5 +40,8 @@ void loop () {
     }
   }
   if(flag) putc('\n', stdout);
+  printf("EX: %i\t", ft.ex.getReading());
+
+  
   delay(10);
 }
