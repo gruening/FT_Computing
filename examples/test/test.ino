@@ -1,5 +1,5 @@
 /* Fischertechnik Computing Code 
-   Copyright 2015, 2016 Andre Gruening
+   Copyright 2015, 2016, 2018 Andre Gruening
    GNU Licence v3 or later
 */
 
@@ -41,7 +41,6 @@ void loop () {
   }
   if(flag) putc('\n', stdout);
   printf("EX: %i\t", ft.ex.getReading());
-
-  
-  delay(10);
+  printf("EY: %i\n", ft.ey.getReading());
+  delay(1);
 }

@@ -1,7 +1,7 @@
 /** \file FT_Comuting.h --Library for using the Arduino Motor Shield to act0
     like the fischertechnik Computing interface.
 
-    Copyright Andre Grüning, 2015, 2016
+    Copyright Andre Grüning, 2015, 2016, 2018
     Released under the GNU v3 licence or later
 */
 
@@ -363,7 +363,6 @@ public:
 
 
   //  const Input& e[]; /// all digitial inputs in an array
-
 
   const Sensor ex;  /// EX analog input
   const Sensor ey;  /// EY analog input
