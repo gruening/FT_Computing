@@ -1,16 +1,224 @@
-enum {LEFT, MIDDLE, RIGHT};
+/** 
+    Code to operate the Tower of Hanoi Robot from the FT Computing kit.
+    Copyright 2016, 2018 Andre Gruening
+    GNU Licence v3 or later
+*/
 
-void toh(int from, int to, int free, int number) {
+#include "FT_Computing.h"
 
-  if (number == 0) return;
+FT_Computing ft(12);
 
-  toh(from, free, to, number -1);
+/// Compare http://forum.arduino.cc/index.php/topic,120440.0.html
+int serial_putchar(char ch, FILE* f) {
+  // expand nl to cr nl
+  if (ch == '\n') serial_putchar('\r',f);
+  // write char to 
+  return Serial.write(ch) == 1? 0 : 1;
+}
 
-  move(from, to);
+FILE serial;
 
-  toh(free, to, from, number -1);
+const Sensor& angle = ft.ex;
+const Motor& rotate = ft.motor1;
+const Motor& lift = ft.motor2;
+const Motor& magnet = ft.motor3;
+const Input& bottom = ft.e3;
+const Input& top = ft.e4;
 
+const unsigned maxDuty = 96;
+
+
+//!   We have three poles to stack discs on
+enum {LEFT, MIDDLE, RIGHT, NUM_POLES};
+
+//! We have this many discs in total. Discs are ordered in size and labled by their order in size.
+#define NUM_DISCS 5
+
+/** A Pole with a stack of discs on it. */
+struct Pole {
+  /** actual stack to store the number and id of discs **/
+  int stack[NUM_DISCS];
+  /** indicates the topmost used position of the pole, ie the number of discs on it **/
+  int top;
+  const int angle;
+  Pole(const int _angle): top(0), angle(_angle) {};
+
+  /**
+      put a new disc on the pole. Check that this new disc is smaller
+      than the current top-most disc. 
+
+      @param disc new disc
+      @return whether move was legal and carried out.
+   */
+  bool put(const int disc) {
+    if (top != 0 && stack[top-1] < disc) {
+      fprintf(stderr, "Illegal move: A bigger disc can never be put on a smaller disc.\n");
+      return false;
+    }
+    else if (top == NUM_DISCS) {
+      fprintf(stderr, "Illegal move: The pole cannot take any more discs.\n");
+      return false;
+    }
+    else {
+      stack[top++] = disc;
+      return true;
+    }
+  }
+
+  /**
+     Take the topmost disc from the pole if any.
+   */
+  int take() {
+    if (top == 0) {
+      fprintf(stderr, "Illigal move: No disc on pole.\n");
+      return -1;
+    }
+    return stack[--top];
+  }
+};
+
+/// Tower of Hanoi has NUM_POLES poles at the give angles:
+Pole poles[NUM_POLES] = { Pole(300), Pole(500), Pole(680)};
+
+void rotate_to(const Pole& pole) {
+
+  rotate.left();
+  while(angle.getReading() > pole.angle + 3);
+
+  rotate.right();
+  while(angle.getReading() < pole.angle - 3);
+  
+  rotate.off();
+}
+  
+void lower_arm() {
+
+  lift.down();
+  while (bottom.off());
+  lift.off();
 }
 
 
-    
+void raise_arm() {
+
+  lift.up();
+  while (top.off());
+  lift.off();
+}
+
+/**
+   Move robot arm to pick up a disc at from and put it down at to
+   @param disc id for disc -- to adjust magnetic strength.
+   @param from pole to take disc from
+   @param to pole to put disc down on.
+
+   Pre-condition: arm is in the upper position.
+   Post-condition: arm is in the upper position.
+ */
+void robot_move_disc(const int disc, const int from, const int to) {
+
+  int strength;
+  switch(disc) {
+  case 1:
+    strength = (Motor::_maxDutyCycle * 2) / 5;
+    break;
+  case 2:
+  case 3:     
+    strength = Motor::_maxDutyCycle / 2;
+    break;
+  default:
+    strength = Motor::_maxDutyCycle;
+  }
+
+  // pick up disc
+  rotate_to(poles[from]);
+  lower_arm();
+  magnet.on(strength);
+  raise_arm();
+
+  // drop disc
+  rotate_to(poles[to]);
+  lower_arm();
+  magnet.off();
+  raise_arm();
+  
+}
+
+
+
+/** 
+    move a single disc from one pole to another.
+    @param from pole to take top-most disc from.
+    @param to pole to put the disc on
+*/
+void move_single_disc(const int from, const int to) {
+  const int disc = poles[from].take();
+  poles[to].put(disc);
+  fprintf(stderr, "Moving Disk %i from %i to %i.\n", disc, from, to);
+  robot_move_disc(disc, from, to);
+  /** robot control code to go in here */
+}
+
+
+/**
+   recusrively move a number of disc from one pole to another, keeping the
+   invarients of the Tower of Hanoi problem.
+
+   @param from pole to take the discs from
+   @param free pole to use to temporarily put discs.
+   @param to pole to put the discs on
+   @param number of topmost discs to move from from to to.
+ */
+void move_discs(const int from, const int free, const int to, const int number) {
+
+  // done -- no disc to move
+  if(number == 0) return;
+
+  // recursively move the topmost number-1 discs to the free pole
+  move_discs(from, to, free, number-1);
+
+  // move the remaining disc direct:
+  move_single_disc(from, to);
+
+  // recurively move the disc temporatily stored on the free pole to
+  // the to pol.
+  move_discs(free, from, to, number-1);
+
+}
+	
+void setup() {
+
+  // Serial.begin(9600);
+  Serial.begin(115200);
+  // Set up stdout
+  fdev_setup_stream(&serial, serial_putchar, NULL, _FDEV_SETUP_WRITE);
+  stdout = &serial;
+  stderr = &serial;
+  
+  // Fill LEFT pole with NUM_DISCS discs:
+  for(int i = NUM_DISCS; i > 0; i--) {
+    poles[LEFT].put(i);
+  }
+
+#ifdef TEST
+  // lower_arm();
+  raise_arm();
+  rotate.right();
+  printf("Setup done\n");
+
+  exit(0);
+#endif
+
+  raise_arm();
+  
+}
+
+void loop() {
+
+  // move all discs from the LEFT to the RIGHT pole, using the MIDDLE
+  // pole to temporarily store discs.
+  move_discs(LEFT, MIDDLE, RIGHT, NUM_DISCS);
+
+  exit(0);
+  //move_discs(RIGHT, MIDDLE, LEFT, NUM_DISCS);
+}

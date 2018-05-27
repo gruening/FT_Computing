@@ -11,8 +11,6 @@
  * @date   Sun Jan 17 17:19:23 2016
  * 
  * @brief  
- * 
- * 
  */
 
 #ifndef FT_Computing_h
@@ -31,10 +29,11 @@
 class Motor {
 private:
   const int _pwmPin; /// pin for pwm signal
-  const static int _maxDutyCycle = 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
   const int _directionPin; /// pin for direction signal, or -1 if none.
 
-public:  
+public:
+    const static int _maxDutyCycle = 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
+
   /** Creates a new motor. If you are not driving a motor but a devise
       for witch change of direction does not make sense, ie a filement
       lamp or electromagnet, you can leave out the dirPin argument. 
@@ -188,6 +187,25 @@ public:
     return this ->isInactive();
   }
   /** 
+   * Convenience function. Wraps a call to isActive(). Useful where
+   * the active state of this Input is though of a button being depressed.
+   *
+   * @return true if the connected sensor is depressed, false otherwise.
+   */
+  bool on() const {
+    return this ->isActive();
+  }
+  /** 
+   * Convenience function. Wraps a call to isInactive().
+   * @return true if the sensor connected to this Input is not depressed. 
+   */
+  bool off() const {
+    return this ->isInactive();
+  }
+
+
+  
+  /** 
    * @return the Ardiuno pin this Input is using.
    */
   int toPin() const {
@@ -339,6 +357,7 @@ public:
 	       int pinE5 = 7, 
 	       int pinE6 = 4, 
 	       int pinE7 = 2,
+	       // available: 1 (RxTx), 6,8 (Brake),9 (Brake) ,A0 (motor load) ,A1 (motoerload)
 
 	       // two analog inputs:
 	       int pinEX = A2, 

@@ -18,7 +18,7 @@ int serial_putchar(char ch, FILE* f) {
 FILE serial;
 
 void setup(){
-    Serial.begin(9600);
+    Serial.begin(115200);
 
     // Set up stdout
     fdev_setup_stream(&serial, serial_putchar, NULL, _FDEV_SETUP_WRITE);
