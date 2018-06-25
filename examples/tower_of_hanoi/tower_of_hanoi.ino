@@ -161,12 +161,19 @@ void robot_move_disc(const int disc, const int from, const int to) {
   // pick up disc
   rotate_to(poles[from]);
   lower_arm();
-  magnet.on(strength);
+  magnet.right(strength);
   raise_arm();
 
   // drop disc
   rotate_to(poles[to]);
   lower_arm();
+  // demagnetise by reversing polarity for a short time.
+  magnet.left(strength);
+  delay(10);
+  magnet.right(strength);
+  delay(2);
+  magnet.left(strength);
+  delay(1);
   magnet.off();
   raise_arm();
 }

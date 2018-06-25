@@ -348,7 +348,7 @@ public:
 	       int pwmM2 = 11, 
 	       int dirM2 = 13, 
 	       int pwmM3 = 10, 
-	       int dirM3 = -1,
+	       int dirM3 = 6, 
 	       int pinE0 = A5,
 	       int pinE1 = -1, // assign
 	       int pinE2 = -1, // assign 
@@ -357,7 +357,7 @@ public:
 	       int pinE5 = 7, 
 	       int pinE6 = 4, 
 	       int pinE7 = 2,
-	       // available: 1 (RxTx), 6,8 (Brake),9 (Brake) ,A0 (motor load) ,A1 (motoerload)
+	       // available: 1 (RxTx), 8 (Brake),9 (Brake) ,A0 (motor load) ,A1 (motoerload)
 
 	       // two analog inputs:
 	       int pinEX = A2, 
