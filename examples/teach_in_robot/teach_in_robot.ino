@@ -1,5 +1,5 @@
 /** 
-    Code to operate the Tower of Hanoi Robot from the FT Computing kit.
+    Code to operate the Teach-In Robot from the FT Computing kit.
     Copyright 2018 Andre Gruening
     GNU Licence v3 or later
 */
@@ -8,7 +8,12 @@
 
 FT_Computing ft(12);
 
-/// Compare http://forum.arduino.cc/index.php/topic,120440.0.html
+/**
+   Interface serial port with the stdlib FILE io ioperations
+   From http://forum.arduino.cc/index.php/topic,120440.0.html
+   @param ch char to write
+   @param f file structure to use for writing.
+*/
 int serial_putchar(char ch, FILE* f) {
   // expand nl to cr nl
   if (ch == '\n') serial_putchar('\r',f);
@@ -16,6 +21,7 @@ int serial_putchar(char ch, FILE* f) {
   return Serial.write(ch) == 1? 0 : 1;
 }
 
+/// hold file data for serial output
 FILE serial;
 
 /// motor to rotate tower
@@ -27,46 +33,57 @@ const Sensor& angle = ft.ex;
 const Motor& arm = ft.motor2;
 /// indicate position of arm
 const Sensor& height= ft.ey;
-/// pwm driver to the electromagnet
+
+/// pwm driver for the electromagnet
 const Motor& magnet = ft.motor3;
 
-const Input& left = ft.e3;
-const Input& right = ft.e4;
-const Input& up = ft.e5;
-const Input& down = ft.e6;
-const Input& toggle_magnet = ft.e7;
-const Input& teach_in = ft.e8;
-const Input& run = ft.e2; // this is not accessible
+/// input buttons
+const Input& left = ft.e3; /// turn left
+const Input& right = ft.e4; /// turn right
+const Input& up = ft.e5; /// arm up
+const Input& down = ft.e6; /// arm down
+const Input& toggle_magnet = ft.e7; /// toggle magnet
+const Input& teach_in = ft.e8; /// teach in a position
+const Input& run = ft.e2; /// exit teaching and replay the tought in sequency.
+/// @todo This is not accessible -- need to change for final example.
 
-//! tolarance for position
+//! tolarance for position of ex and ey readings
 #define TOLERANCE 3
 
+/**
+   rotate arm to target position
+   @param target position reading to rotate to.
+ */
 void rotate_to(const int target) {
 
   rotate.left();
   while(angle.getReading() > target + TOLERANCE);
-
   rotate.right();
   while(angle.getReading() < target - TOLERANCE);
-  
   rotate.off();
 }
 
 /**
-   lower arm to bottom position.
+   move arm to given position
+   @param pos position reading to move arm to.
  */
 void move_arm(const int pos) {
 
   arm.down();
   while(height.getReading() > pos + TOLERANCE);
-
   arm.up();
   while(height.getReading() < pos - TOLERANCE);
-  
   arm.off();
 }
 
-/** assume Magnet is always switch on with magnet.right */
+/** 
+ switch off magnet such that held objects is demagnetised by reversing
+ current through magent for a few times.  
+
+ @pre assume magnet is always switch on with magnet.on() (ie
+ magnet.right()) 
+ @param magnet pwm output the magnet is connected to.
+*/
 void demagnetise_off(const Motor& magnet) {
 
   magnet.left();
@@ -79,8 +96,6 @@ void demagnetise_off(const Motor& magnet) {
 }
 
 
-
-
 void setup() {
 
   // Set up stdout and stderr
@@ -90,17 +105,32 @@ void setup() {
   stderr = &serial;
 }
 
+/**
+   data structure to describe position of robot:
+   angle of tower, hight of arm, and whether magnet is on or off.
+ */
 struct Position {
   int angle;
   int height;
   bool magnet;
 };
 
+/// maximal number of robot positions we want to store.
 #define MAX_LEN 255
-  
+
+/// list of taught positions
 Position pos[MAX_LEN];
+/// pointer beyond last used element of list pos
 int num_pos = 0;
 
+/**
+   teach the robot a number of positions.
+   use buttons left, right, up, down and toggle_magnet to manoeuver
+   the robot into desired positions and magnet state, then press
+   teach_in button to store this postion (and magnet state).
+
+   Press run button to end the teaching.
+ */
 void teach() {
 
   printf("Teaching...");
@@ -109,8 +139,7 @@ void teach() {
 
   while(not run.isDepressed()) {
 
-    static bool on = 0;
-
+    static bool on = 0; 
 
     if(teach_in.isDepressed()) {
       if(num_pos < MAX_LEN) 
@@ -125,37 +154,43 @@ void teach() {
     while(up.isDepressed()) arm.up();
     while(down.isDepressed()) arm.down();
     if(toggle_magnet.isDepressed()) {
-      on ^= 1;
+      on ^= true;
       if(on) magnet.on();
       else demagnetise_off(magnet);
-      while(down.isDepressed()) { /* wait for button release */};
+      while(toggle_magnet.isDepressed()) { /* wait for button release */};
     }
   }
 }
   
 
+/**
+   replay leant sequence of positions
+*/
+void replay() {
 
-  void replay() {
+  printf("Replaying...");
 
-    printf("Replaying...");
+  for(int current = 0; current < num_pos; current++) {
 
-    for(int current = 0; current < num_pos; current++) {
-
-      // Avoid obstacles by first moving up:
-      if(pos[current].height > height.getReading()) {
-	move_arm(pos[current].angle);
-      }
-
-      rotate_to(pos[current].angle);
-
-      // Avoid obstacles by last moving down:
-      if(pos[current].height < height.getReading()) {
-	move_arm(pos[current].angle);
-      }
-      pos[current].magnet ? magnet.on() : demagnetise_off(magnet);
+    // Avoid obstacles by first moving up:
+    if(pos[current].height > height.getReading()) {
+      move_arm(pos[current].angle);
     }
-  }
 
+    rotate_to(pos[current].angle);
+
+    // Avoid obstacles by last moving down:
+    if(pos[current].height < height.getReading()) {
+      move_arm(pos[current].angle);
+    }
+    pos[current].magnet ? magnet.on() : demagnetise_off(magnet);
+  }
+}
+
+/**
+   run teaching is the teachin button is depressed, otherwise replay
+   the learn sequence if any.
+*/
 void loop() {
 
   while(1) {
