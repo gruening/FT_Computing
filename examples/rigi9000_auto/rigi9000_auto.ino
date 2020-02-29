@@ -14,12 +14,8 @@
 
 FT_Computing ft(12);
 
-//const Input& forwards = ft.e3; 
-//const Input& backwards = ft.e4; 
 const Sensor& leftSensor = ft.ex;
 const Sensor& rightSensor = ft.ey;
-
-
 const Motor& motor = ft.motor1;
 const Input& startButton = ft.e0;
 
@@ -56,36 +52,38 @@ void setup() {
 const int maxDutyCycle = 56;
 const int minDutyCycle = 48;
 
+const int closeToBottom = 20;
+
 void loop() {
 
   double dist;
-  // wait for right gondola to arrive
 
+  // accelerate right gondola downwards
   for(int dutyCycle = minDutyCycle; dutyCycle < maxDutyCycle; dutyCycle++) {
     motor.right(dutyCycle);
     delay(100);
   }  
 
+  // wait for right gondola to get close to bottom station
   do {
     dist = distance(rightSensor);
     Serial.println(dist); 
-  } while (dist > 20.0);
+  } while (dist > closeToBottom);
 
-
+  // decelerate
   for(int dutyCycle = maxDutyCycle; dutyCycle > minDutyCycle; dutyCycle--) {
     motor.right(dutyCycle);
     delay(100);
   }  
 
-
+  // stop
   motor.off();
 
 
   // wait for passenger to (dis)embark
   //delay(10000);
+  // or do it manualy:
   while(startButton.isReleased());
-
-  // wait for left gondola to arrive
 
 
   for(int dutyCycle = minDutyCycle; dutyCycle < maxDutyCycle; dutyCycle++) {
@@ -93,17 +91,19 @@ void loop() {
     delay(100);
   }  
 
+  // wait for left gondola to get close to bottom station
   do {
     dist = distance(leftSensor); 
     Serial.println(dist);
-  } while (dist  > 20.0);
+  } while (dist  > closeToBottom);
 
-
+  // decelarate
   for(int dutyCycle = maxDutyCycle; dutyCycle > minDutyCycle; dutyCycle--) {
     motor.left(dutyCycle);
     delay(100);
   }  
 
+  // stop
   motor.off();
 
   //delay(10000);

@@ -4,7 +4,7 @@
 */
 
 /** Distance sensor:
-	- analog reg values around 50-60 mean infinite
+    - analog reg values around 50-60 mean infinite
     - anaglo read vaues at 600 mean stop,
     - suggestion: between f = 600 and 100 make it slower with a factor of 1/f
     */

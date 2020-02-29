@@ -139,7 +139,7 @@ void teach() {
 
   while(not run.isDepressed()) {
 
-    static bool on = 0; 
+    static bool on = false; 
 
     if(teach_in.isDepressed()) {
       if(num_pos < MAX_LEN) 

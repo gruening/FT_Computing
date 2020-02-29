@@ -32,7 +32,7 @@ private:
   const int _directionPin; /// pin for direction signal, or -1 if none.
 
 public:
-    const static int _maxDutyCycle = 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
+  const static int _maxDutyCycle = 255; // 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
 
   /** Creates a new motor. If you are not driving a motor but a devise
       for witch change of direction does not make sense, ie a filement
