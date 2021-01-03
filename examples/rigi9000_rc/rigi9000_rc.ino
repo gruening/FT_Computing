@@ -71,20 +71,20 @@ void loop() {
 enum STATE {STOP, UNCHANGED, LEFT_DOWN, RIGHT_DOWN};
 
 /**
-@returns the reading from the remote contole.
+@returns the reading from the remote control
  */
 enum STATE get_rc(void) {
   
   if (rc_stop.isActive()) {
-    Serial.write("STOP\n");
+    Serial.write("STOP\r\n");
     return STOP;
   }
   else if (rc_left_down.isActive()) {
-    Serial.write("LEFT DOWN\n");
+    Serial.write("LEFT DOWN\r\n");
     return LEFT_DOWN;
   }
   else if (rc_right_down.isActive()) {
-    Serial.write("RIGHT DOWN\n");
+    Serial.write("RIGHT DOWN\r\n");
     return RIGHT_DOWN;
   }
   //  else if  (rc_auto.isActive()) {
@@ -102,11 +102,24 @@ mutates the state to stop if we are already too close to the distance sensor
 enum STATE check_distance(const enum STATE state) {
 
   //return state; // for debugging
-  
-  if ((state == LEFT_DOWN) && distance(leftDistance) < closeToBottom) 
+
+  const int left_distance = distance(leftDistance);
+  const int right_distance = distance(rightDistance);
+
+  Serial.write("Left Distance:\t");
+  Serial.print(left_distance);
+  Serial.write("\r\nRight Distance:\t");
+  Serial.print(right_distance);
+  Serial.write("\r\n");
+    
+  if ((state == LEFT_DOWN) && left_distance < closeToBottom) {
+    Serial.write("CLOSE LEFT.\r\n");
     return STOP;
-  else if ((state == RIGHT_DOWN) && distance(rightDistance) < closeToBottom)
+  }
+  else if ((state == RIGHT_DOWN) && right_distance < closeToBottom) {
+    Serial.write("CLOSE RIGHT.\r\n");
     return STOP;
+  }
   else return state;
 }
 
@@ -118,13 +131,16 @@ void act(const enum STATE state) {
 
   switch(state) {
   case LEFT_DOWN:
-    motor.left(255);
+    Serial.write("MOTOR LEFT DOWN\r\n");
+    motor.left(255/5);
     break;
   case RIGHT_DOWN:
-    motor.right(255);
+    Serial.write("MOTOR RIGHT DOWN\r\n");
+    motor.right(255/5);
     break;
   default:
   case STOP:
+    Serial.write("MOTOR STOP\r\n");
     motor.off();
   }
 }
@@ -138,6 +154,7 @@ void manual() {
 
     // if a button on the RC was pressed:
     if ( (rc_state != UNCHANGED) && (rc_state != current)) {
+      Serial.write("DETECTED BUTTON PRESS\r\n");
       current = check_distance(rc_state);
       act(current);
     }

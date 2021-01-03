@@ -89,7 +89,7 @@ struct Pole {
 /** Tower of Hanoi has NUM_POLES poles at the give angles:
     Pole angles should be checked by trail and error with the help of test.ino
  */
-Pole poles[NUM_POLES] = { Pole(300), Pole(500), Pole(680)};
+Pole poles[NUM_POLES] = { Pole(291), Pole(484), Pole(677)};
 
 /**
    rotate tower to position of pole.
@@ -97,10 +97,10 @@ Pole poles[NUM_POLES] = { Pole(300), Pole(500), Pole(680)};
  */
 void rotate_to(const Pole& pole) {
 
-  rotate.left();
+  rotate.left(55);
   while(angle.getReading() > pole.angle + TOLERANCE);
 
-  rotate.right();
+  rotate.right(55);
   while(angle.getReading() < pole.angle - TOLERANCE);
   
   rotate.off();
@@ -111,7 +111,9 @@ void rotate_to(const Pole& pole) {
  */
 void lower_arm() {
 
-  lift.down();
+  lift.down(96);
+  delay(50);
+  lift.down(64);
   while (bottom.off());
   lift.off();
 }
@@ -121,7 +123,7 @@ void lower_arm() {
  */
 void raise_arm() {
 
-  lift.up();
+  lift.up(128);
   while (top.off());
   lift.off();
 }
@@ -148,12 +150,14 @@ void robot_move_disc(const int disc, const int from, const int to) {
   int strength;
   switch(disc) {
   case 1:
-    strength = (Motor::_maxDutyCycle * 2) / 5;
-    break;
+    //strength = (Motor::_maxDutyCycle * 2) / 6;
+    //break;
   case 2:
   case 3:     
     strength = Motor::_maxDutyCycle / 2;
     break;
+  case 4:
+    strength = (Motor::_maxDutyCycle * 2) / 3;
   default:
     strength = Motor::_maxDutyCycle;
   }
@@ -167,12 +171,13 @@ void robot_move_disc(const int disc, const int from, const int to) {
   // drop disc
   rotate_to(poles[to]);
   lower_arm();
+  lift.up(); // new
   // demagnetise by reversing polarity for a short time.
   magnet.left(strength);
   delay(10);
-  magnet.right(strength);
+  magnet.right(strength / 2);
   delay(2);
-  magnet.left(strength);
+  magnet.left(strength / 2);
   delay(1);
   magnet.off();
   raise_arm();

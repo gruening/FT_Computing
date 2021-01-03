@@ -32,7 +32,7 @@ private:
   const int _directionPin; /// pin for direction signal, or -1 if none.
 
 public:
-  const static int _maxDutyCycle = 255; // 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
+  const static int _maxDutyCycle = 64; // 96; /// \todo adaptable maximal duty cycle --- currently hard-coded
 
   /** Creates a new motor. If you are not driving a motor but a devise
       for witch change of direction does not make sense, ie a filement
@@ -313,6 +313,8 @@ public:
   /**
    * maximum admissable ontime for the PWM pins in order not to
    * overpower the minimotors for given supply voltage
+   *
+   * TODO: not functional yet -- it is not evaluated anywhere.
    */
   const int maxPwm;  
 
@@ -324,7 +326,7 @@ public:
    * header declaration below, and the corresponding arguments can
    * hence be left out if you connect to the same pins as I did.
    * 
-   * @param vMot  the supply voltage to the motor
+   * @param vss  the supply voltage
    * @param pwmM1 pin for pwm signal for Motor 1
    * @param dirM1 pin for direction signal for Motor 1
    * @param pwmM2 pin for pwm signal for Motor 2
@@ -342,7 +344,7 @@ public:
    * @pinE7 pin digital input line E7 is connected to.
    * 
    */
-  FT_Computing(int vMot = 12, 
+  FT_Computing(int vss = 12, 
 	       int pwmM1 = 3,
 	       int dirM1 = 12, 
 	       int pwmM2 = 11, 
