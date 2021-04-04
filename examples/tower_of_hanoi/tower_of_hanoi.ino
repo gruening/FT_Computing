@@ -97,9 +97,13 @@ Pole poles[NUM_POLES] = { Pole(291), Pole(484), Pole(677)};
  */
 void rotate_to(const Pole& pole) {
 
+  rotate.left(); // break loose
+  delay(100);
   rotate.left(55);
   while(angle.getReading() > pole.angle + TOLERANCE);
 
+  rotate.right(); 
+  delay(100);
   rotate.right(55);
   while(angle.getReading() < pole.angle - TOLERANCE);
   
@@ -111,9 +115,9 @@ void rotate_to(const Pole& pole) {
  */
 void lower_arm() {
 
-  lift.down(96);
-  delay(50);
-  lift.down(64);
+  //lift.down(96);
+  //delay(50);
+  lift.down();
   while (bottom.off());
   lift.off();
 }
@@ -123,7 +127,7 @@ void lower_arm() {
  */
 void raise_arm() {
 
-  lift.up(128);
+  lift.up();
   while (top.off());
   lift.off();
 }
